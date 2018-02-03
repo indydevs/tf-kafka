@@ -1,4 +1,3 @@
-
 provider "aws" {
   region = "${var.aws_region}"
   profile = "${var.aws_profile}"
@@ -7,14 +6,34 @@ provider "aws" {
 resource "aws_vpc" "zookeeper_vpc" {
   cidr_block = "172.31.0.0/16"
   enable_dns_hostnames = "true"
+
   tags  {
     Name = "zookeeper"
   }
 }
 
-# 172.31.0.0/20: ap-southeast-2b
-# 172.31.16.0/20: ap-southeast-2c
-# 172.31.32.0/20: ap-southeast-2a
+resource "aws_internet_gateway" "zookeeper_vpc_igw" {
+  vpc_id = "${aws_vpc.zookeeper_vpc.id}"
+
+  tags {
+    Name = "zookeeper_vpc"
+  }
+}
+
+resource "aws_route_table" "zookeeper_vpc_route_table" {
+  vpc_id = "${aws_vpc.zookeeper_vpc.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.zookeeper_vpc_igw.id}"
+  }
+}
+
+resource "aws_route_table_association" "zookeeper_1_subnet_route_table" {
+  subnet_id      = "${aws_subnet.zookeeper_1.id}"
+  route_table_id = "${aws_route_table.zookeeper_vpc_route_table.id}"
+}
+
 resource "aws_subnet" "zookeeper_1" {
   vpc_id = "${aws_vpc.zookeeper_vpc.id}"
   cidr_block = "172.31.0.0/20"
@@ -61,7 +80,7 @@ resource "aws_security_group" "kafka_zookeeper" {
   }
 
   tags {
-    Name = "Zookeeper"
+    Name = "zookeeper"
   }
 }
 
@@ -81,6 +100,6 @@ resource "aws_instance" "zookeeper" {
   key_name = "${var.key_name}"
 
   tags {
-    Name = "Zookeeper Server 1"
+    Name = "zk-server1"
   }
 }
