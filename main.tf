@@ -79,6 +79,13 @@ resource "aws_security_group" "kafka_zookeeper" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  egress {
+    from_port = "0"
+    to_port = "0"
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags {
     Name = "zookeeper"
   }
@@ -90,7 +97,7 @@ resource "aws_instance" "zookeeper" {
   vpc_security_group_ids = ["${aws_security_group.kafka_zookeeper.id}"]
   subnet_id = "${aws_subnet.zookeeper_1.id}"
   associate_public_ip_address = "true"
-
+  # user_data = "$file('zookeeper_installation.sh')"
   root_block_device {
     volume_size = "8"
     volume_type = "gp2"
@@ -102,9 +109,4 @@ resource "aws_instance" "zookeeper" {
   tags {
     Name = "zk-server1"
   }
-}
-
-resource "aws_eip" "lb" {
-  instance = "${aws_instance.zookeeper.id}"
-  vpc = true
 }
