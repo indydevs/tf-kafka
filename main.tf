@@ -103,3 +103,8 @@ resource "aws_instance" "zookeeper" {
     Name = "zk-server1"
   }
 }
+
+resource "aws_eip" "lb" {
+  instance = "${aws_instance.zookeeper.id}"
+  vpc = true
+}
