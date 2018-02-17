@@ -26,10 +26,6 @@ echo '#!/bin/bash
 #/etc/init.d/zookeeper
 DAEMON_PATH=/home/ubuntu/kafka/bin
 DAEMON_NAME=zookeeper
-# Check that networking is up.
-#[ ${NETWORKING} = "no" ] && exit 0
-
-PATH=$PATH:$DAEMON_PATH
 
 # See how we were called.
 case "$1" in
