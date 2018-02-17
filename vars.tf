@@ -7,11 +7,6 @@ variable "aws_region" {
   default = "ap-southeast-2"
 }
 
-variable "ami" {
-  description = "AWS AMI for Ubuntu 16.04 Server"
-  default = "ami-33ab5251"
-}
-
 variable "key_name" {
   description = "Key pair name"
   default = "kafka_zookeeper"
